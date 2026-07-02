@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Efek sobekan kertas nota di bagian bawah kartu struk */
+.receipt-tear {
+  position: relative;
+}
+.receipt-tear::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -9px;
+  height: 9px;
+  background-image: linear-gradient(-45deg, white 5px, transparent 0),
+    linear-gradient(45deg, white 5px, transparent 0);
+  background-size: 10px 10px;
+  background-repeat: repeat-x;
+  background-position: bottom;
+}
