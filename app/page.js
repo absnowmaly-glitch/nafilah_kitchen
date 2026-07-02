@@ -1,10 +1,13 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
+
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { formatRupiah } from '@/lib/format';
+import { formatRupiah, formatClock } from '@/lib/format';
 import { STATUS } from '@/lib/statusConfig';
-import { Plus, Minus, ShoppingCart, X, Check } from 'lucide-react';
+import { Plus, Minus, ShoppingCart, X, Check, Printer } from 'lucide-react';
 
 export default function KasirPage() {
   const [menuItems, setMenuItems] = useState([]);
@@ -284,6 +287,38 @@ export default function KasirPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50" />
           <div className="relative w-full max-w-sm bg-white rounded-2xl rounded-b-none p-5 receipt-tear">
+            <div id="print-area" className="hidden print:block">
+              <div className="text-center mb-2">
+                <p className="font-bold text-sm tracking-widest">NAFILAH KITCHEN</p>
+                <p className="text-[10px] text-stone-500">
+                  {new Date(receipt.created_at).toLocaleDateString('id-ID')} ·{' '}
+                  {formatClock(receipt.created_at)}
+                </p>
+              </div>
+              <div className="text-center mb-2">
+                <p className="text-[10px] tracking-widest uppercase">Nota Pembayaran</p>
+                <p className="text-2xl font-bold font-mono">#{receipt.order_number}</p>
+                {receipt.customer_name && <p className="text-sm mt-1">{receipt.customer_name}</p>}
+              </div>
+              <div className="border-t border-dashed border-stone-400 pt-2 space-y-1 mb-2">
+                {receipt.items.map((it, idx) => (
+                  <div key={idx} className="flex justify-between text-xs">
+                    <span>
+                      {it.name} x{it.qty}
+                    </span>
+                    <span className="font-mono">{formatRupiah(it.subtotal)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="border-t border-dashed border-stone-400 pt-2 flex justify-between font-bold text-sm mb-3">
+                <span>Total</span>
+                <span className="font-mono">{formatRupiah(receipt.total)}</span>
+              </div>
+              <p className="text-center text-[11px]">
+                Silakan bayar &amp; tunjukkan nota ini ke Kasir Utama
+              </p>
+            </div>
+
             <div className="text-center mb-4">
               <p className="text-xs text-stone-400 tracking-widest uppercase">Nota Pembayaran</p>
               <p className="text-3xl font-bold text-primary-600 font-mono mt-1">
@@ -311,10 +346,16 @@ export default function KasirPage() {
             </div>
 
             <p className="text-xs text-center text-stone-400 mb-4">
-              Tunjukkan nota ini ke kasir untuk pembayaran
+              Silakan bayar &amp; tunjukkan nota ini ke Kasir Utama
             </p>
 
             <div className="flex flex-col gap-2">
+              <button
+                onClick={() => window.print()}
+                className="w-full bg-stone-800 text-white rounded-xl py-3 font-semibold flex items-center justify-center gap-2"
+              >
+                <Printer size={16} /> Cetak Nota
+              </button>
               <button
                 onClick={markPaidNow}
                 className="w-full bg-primary-500 text-white rounded-xl py-3 font-semibold flex items-center justify-center gap-2"
