@@ -1,10 +1,13 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
+
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { formatRupiah, timeAgo, formatClock } from '@/lib/format';
 import { STATUS, STATUS_CONFIG, NEXT_STATUS, NEXT_ACTION_LABEL } from '@/lib/statusConfig';
-import { Clock } from 'lucide-react';
+import { Clock, Printer } from 'lucide-react';
 
 const TABS = [STATUS.MENUNGGU, STATUS.DIPROSES, STATUS.SIAP, STATUS.SELESAI];
 
@@ -13,6 +16,18 @@ export default function AntrianPage() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState(STATUS.MENUNGGU);
   const [, forceTick] = useState(0);
+  const [printOrder, setPrintOrder] = useState(null);
+
+  useEffect(() => {
+    if (!printOrder) return;
+    const handleAfterPrint = () => setPrintOrder(null);
+    window.addEventListener('afterprint', handleAfterPrint);
+    const t = setTimeout(() => window.print(), 150);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('afterprint', handleAfterPrint);
+    };
+  }, [printOrder]);
 
   useEffect(() => {
     let mounted = true;
@@ -138,6 +153,13 @@ export default function AntrianPage() {
             <div className="flex items-center justify-between pt-2 border-t border-stone-100">
               <span className="font-bold text-stone-800 font-mono">{formatRupiah(order.total)}</span>
               <div className="flex gap-2">
+                <button
+                  onClick={() => setPrintOrder(order)}
+                  className="w-8 h-8 flex items-center justify-center text-stone-400 border border-stone-200 rounded-xl"
+                  aria-label={`Cetak nota #${order.order_number}`}
+                >
+                  <Printer size={14} />
+                </button>
                 {order.status === STATUS.MENUNGGU && (
                   <button
                     onClick={() => cancelOrder(order)}
@@ -159,6 +181,40 @@ export default function AntrianPage() {
           </div>
         ))}
       </main>
+
+      {printOrder && (
+        <div id="print-area" className="hidden print:block">
+          <div className="text-center mb-2">
+            <p className="font-bold text-sm tracking-widest">NAFILAH KITCHEN</p>
+            <p className="text-[10px] text-stone-500">
+              {new Date(printOrder.created_at).toLocaleDateString('id-ID')} ·{' '}
+              {formatClock(printOrder.created_at)}
+            </p>
+          </div>
+          <div className="text-center mb-2">
+            <p className="text-[10px] tracking-widest uppercase">Nota Pembayaran</p>
+            <p className="text-2xl font-bold font-mono">#{printOrder.order_number}</p>
+            {printOrder.customer_name && <p className="text-sm mt-1">{printOrder.customer_name}</p>}
+          </div>
+          <div className="border-t border-dashed border-stone-400 pt-2 space-y-1 mb-2">
+            {printOrder.items.map((it, idx) => (
+              <div key={idx} className="flex justify-between text-xs">
+                <span>
+                  {it.name} x{it.qty}
+                </span>
+                <span className="font-mono">{formatRupiah(it.subtotal)}</span>
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-dashed border-stone-400 pt-2 flex justify-between font-bold text-sm mb-3">
+            <span>Total</span>
+            <span className="font-mono">{formatRupiah(printOrder.total)}</span>
+          </div>
+          <p className="text-center text-[11px]">
+            Silakan bayar &amp; tunjukkan nota ini ke Kasir Utama
+          </p>
+        </div>
+      )}
     </div>
   );
 }
