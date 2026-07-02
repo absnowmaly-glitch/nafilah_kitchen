@@ -40,7 +40,7 @@ export default function RootLayout({ children }) {
           <div className="flex items-center gap-2 px-4 py-2.5 border-b border-stone-100">
             <img src="/logo.png" alt="Nafilah" className="h-7 w-auto" />
             <span className="font-extrabold text-stone-700 text-sm tracking-wide">
-              NAFILAH POS
+            Nafilah Kitchen
             </span>
           </div>
           {children}
