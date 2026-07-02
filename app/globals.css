@@ -32,3 +32,24 @@ body {
   background-repeat: repeat-x;
   background-position: bottom;
 }
+
+/* Cetak nota: sembunyikan semua isi halaman, tampilkan hanya #print-area */
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 4mm;
+  }
+  body * {
+    visibility: hidden;
+  }
+  #print-area,
+  #print-area * {
+    visibility: visible;
+  }
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
