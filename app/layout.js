@@ -15,8 +15,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: 'Nafilah POS',
-  description: 'Aplikasi kasir, antrian, dan menu untuk kedai Nafilah',
+  title: 'Nafilah KITCHEN',
+  description: 'Aplikasi kasir, antrian, dan menu',
   manifest: '/manifest.json',
   icons: {
     icon: '/icon-512.png',
