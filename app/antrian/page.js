@@ -185,6 +185,7 @@ export default function AntrianPage() {
       {printOrder && (
         <div id="print-area" className="hidden print:block">
           <div className="text-center mb-2">
+            <img src="/logo-black.png" alt="Nafilah" className="h-12 w-auto mx-auto mb-1" />
             <p className="font-bold text-sm tracking-widest">NAFILAH KITCHEN</p>
             <p className="text-[10px] text-stone-500">
               {new Date(printOrder.created_at).toLocaleDateString('id-ID')} ·{' '}

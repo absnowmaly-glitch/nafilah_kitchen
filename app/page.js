@@ -289,6 +289,7 @@ export default function KasirPage() {
           <div className="relative w-full max-w-sm bg-white rounded-2xl rounded-b-none p-5 receipt-tear">
             <div id="print-area" className="hidden print:block">
               <div className="text-center mb-2">
+                <img src="/logo-black.png" alt="Nafilah" className="h-12 w-auto mx-auto mb-1" />
                 <p className="font-bold text-sm tracking-widest">NAFILAH KITCHEN</p>
                 <p className="text-[10px] text-stone-500">
                   {new Date(receipt.created_at).toLocaleDateString('id-ID')} ·{' '}

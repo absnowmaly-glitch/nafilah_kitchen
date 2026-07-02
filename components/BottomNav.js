@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { ShoppingCart, ClipboardList, UtensilsCrossed } from 'lucide-react';
+import { ShoppingCart, ClipboardList, UtensilsCrossed, BarChart3 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { ACTIVE_STATUSES } from '@/lib/statusConfig';
 
@@ -38,14 +38,15 @@ export default function BottomNav() {
   }, []);
 
   const items = [
-    { href: '/', label: 'Kasir', icon: ShoppingCart },
+    { href: '/', label: 'Pesanan', icon: ShoppingCart },
     { href: '/antrian', label: 'Antrian', icon: ClipboardList, badge: activeCount },
     { href: '/menu', label: 'Menu', icon: UtensilsCrossed },
+    { href: '/laporan', label: 'Laporan', icon: BarChart3 },
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-stone-200 bg-white">
-      <div className="max-w-md mx-auto grid grid-cols-3">
+      <div className="max-w-md mx-auto grid grid-cols-4">
         {items.map(({ href, label, icon: Icon, badge }) => {
           const active = pathname === href;
           return (
