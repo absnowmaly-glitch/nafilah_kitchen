@@ -133,7 +133,7 @@ export default function KasirPage() {
   return (
     <div className="pb-24">
       <header className="sticky top-0 z-30 bg-white border-b border-stone-100 px-4 pt-4 pb-3">
-        <h1 className="text-lg font-bold text-stone-800">Kasir</h1>
+        <h1 className="text-lg font-bold text-stone-800">Pesanan</h1>
         <p className="text-xs text-stone-400">Pilih menu untuk membuat pesanan baru</p>
 
         <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
