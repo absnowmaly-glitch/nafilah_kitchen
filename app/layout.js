@@ -15,8 +15,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: 'Nafilah KITCHEN',
-  description: 'Aplikasi kasir, antrian, dan menu',
+  title: 'Nafilah POS',
+  description: 'Aplikasi kasir, antrian, dan menu untuk kedai Nafilah',
   manifest: '/manifest.json',
   icons: {
     icon: '/icon-512.png',
@@ -29,7 +29,7 @@ export const viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#f0a92a',
+  themeColor: '#1c1917',
 };
 
 export default function RootLayout({ children }) {
@@ -37,10 +37,10 @@ export default function RootLayout({ children }) {
     <html lang="id">
       <body className={`${sans.variable} ${mono.variable} font-sans bg-stone-100`}>
         <div className="max-w-md mx-auto min-h-screen bg-white relative pb-16 shadow-sm">
-          <div className="flex items-center gap-2 px-4 py-2.5 border-b border-stone-100">
-            <img src="/logo.png" alt="Nafilah" className="h-7 w-auto" />
-            <span className="font-extrabold text-stone-700 text-sm tracking-wide">
-            Nafilah Kitchen
+          <div className="flex items-center gap-3 px-4 py-3.5 bg-stone-900">
+            <img src="/logo.png" alt="Nafilah" className="h-11 w-auto" />
+            <span className="font-extrabold text-white text-lg tracking-wide">
+              NAFILAH KITCHEN
             </span>
           </div>
           {children}
