@@ -2,7 +2,6 @@
 
 export const dynamic = 'force-dynamic';
 
-
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { formatRupiah, timeAgo, formatClock } from '@/lib/format';
@@ -10,6 +9,14 @@ import { STATUS, STATUS_CONFIG, NEXT_STATUS, NEXT_ACTION_LABEL } from '@/lib/sta
 import { Clock, Printer } from 'lucide-react';
 
 const TABS = [STATUS.MENUNGGU, STATUS.DIPROSES, STATUS.SIAP, STATUS.SELESAI];
+
+const BORDER_COLOR = {
+  [STATUS.MENUNGGU]: 'border-l-amber-400',
+  [STATUS.DIPROSES]: 'border-l-blue-400',
+  [STATUS.SIAP]: 'border-l-emerald-400',
+  [STATUS.SELESAI]: 'border-l-stone-300',
+  [STATUS.BATAL]: 'border-l-red-400',
+};
 
 export default function AntrianPage() {
   const [orders, setOrders] = useState([]);
@@ -51,7 +58,6 @@ export default function AntrianPage() {
       })
       .subscribe();
 
-    // Perbarui teks "x menit lalu" tiap 30 detik tanpa perlu refetch
     const interval = setInterval(() => forceTick((t) => t + 1), 30000);
 
     return () => {
@@ -90,22 +96,23 @@ export default function AntrianPage() {
   }
 
   return (
-    <div className="pb-24">
-      <header className="sticky top-0 z-30 bg-white border-b border-stone-100 px-4 pt-4 pb-3">
-        <h1 className="text-lg font-bold text-stone-800">Antrian Pesanan</h1>
+    <div className="pb-8">
+      <header className="px-5 pt-5 pb-3">
+        <h1 className="text-2xl font-extrabold text-stone-900 tracking-tight">Antrian Pesanan</h1>
+        <p className="text-sm text-stone-400 mt-0.5">Kelola status pesanan yang masuk</p>
 
-        <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
+        <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-1">
           {TABS.map((s) => (
             <button
               key={s}
               onClick={() => setTab(s)}
-              className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold border flex items-center gap-1.5 transition-colors ${
+              className={`whitespace-nowrap px-4 py-2 rounded-2xl text-sm font-bold flex items-center gap-2 transition-colors ${
                 tab === s
-                  ? 'bg-stone-800 border-stone-800 text-white'
-                  : 'bg-white border-stone-200 text-stone-500'
+                  ? 'bg-stone-900 text-white shadow-sm'
+                  : 'bg-white border border-stone-200 text-stone-500'
               }`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${STATUS_CONFIG[s].dot}`} />
+              <span className={`w-2 h-2 rounded-full ${STATUS_CONFIG[s].dot}`} />
               {STATUS_CONFIG[s].shortLabel}
               {counts[s] > 0 && <span className="opacity-70 font-mono">({counts[s]})</span>}
             </button>
@@ -113,33 +120,38 @@ export default function AntrianPage() {
         </div>
       </header>
 
-      <main className="px-4 pt-4 space-y-3">
+      <main className="px-5 pt-2 space-y-3">
         {loading && <p className="text-center text-stone-400 text-sm py-10">Memuat...</p>}
         {!loading && filtered.length === 0 && (
           <p className="text-center text-stone-400 text-sm py-10">Tidak ada pesanan di status ini</p>
         )}
         {filtered.map((order) => (
-          <div key={order.id} className="border border-stone-200 rounded-2xl p-4">
+          <div
+            key={order.id}
+            className={`bg-white rounded-3xl p-4 shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50 border-l-4 ${BORDER_COLOR[order.status]}`}
+          >
             <div className="flex items-start justify-between mb-2">
               <div>
-                <p className="font-bold text-stone-800 font-mono">#{order.order_number}</p>
+                <p className="font-extrabold text-lg text-stone-900 font-mono">
+                  #{order.order_number}
+                </p>
                 {order.customer_name && (
-                  <p className="text-xs text-stone-500">{order.customer_name}</p>
+                  <p className="text-xs text-stone-500 font-medium">{order.customer_name}</p>
                 )}
               </div>
               <div className="text-right">
                 <span
-                  className={`text-[11px] px-2 py-0.5 rounded-full border ${STATUS_CONFIG[order.status].color}`}
+                  className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${STATUS_CONFIG[order.status].color}`}
                 >
                   {STATUS_CONFIG[order.status].label}
                 </span>
-                <p className="text-[11px] text-stone-400 mt-1 flex items-center gap-1 justify-end">
+                <p className="text-[11px] text-stone-400 mt-1.5 flex items-center gap-1 justify-end">
                   <Clock size={10} /> {formatClock(order.created_at)} · {timeAgo(order.created_at)}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-1 mb-3">
+            <div className="space-y-1 mb-3 mt-3">
               {order.items.map((it, idx) => (
                 <div key={idx} className="flex justify-between text-sm text-stone-600">
                   <span>
@@ -150,20 +162,22 @@ export default function AntrianPage() {
               ))}
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-stone-100">
-              <span className="font-bold text-stone-800 font-mono">{formatRupiah(order.total)}</span>
-              <div className="flex gap-2">
+            <div className="flex items-center justify-between pt-3 border-t border-stone-100">
+              <span className="font-extrabold text-stone-900 font-mono">
+                {formatRupiah(order.total)}
+              </span>
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => setPrintOrder(order)}
-                  className="w-8 h-8 flex items-center justify-center text-stone-400 border border-stone-200 rounded-xl"
+                  className="w-9 h-9 flex items-center justify-center text-stone-400 bg-stone-100 rounded-xl"
                   aria-label={`Cetak nota #${order.order_number}`}
                 >
-                  <Printer size={14} />
+                  <Printer size={15} />
                 </button>
                 {order.status === STATUS.MENUNGGU && (
                   <button
                     onClick={() => cancelOrder(order)}
-                    className="text-xs text-red-500 font-semibold px-3 py-2"
+                    className="text-xs text-red-500 font-bold px-3 py-2.5"
                   >
                     Batalkan
                   </button>
@@ -171,7 +185,7 @@ export default function AntrianPage() {
                 {NEXT_STATUS[order.status] && (
                   <button
                     onClick={() => advance(order)}
-                    className="text-xs bg-primary-500 text-white font-semibold px-3 py-2 rounded-xl"
+                    className="text-xs bg-primary-500 text-stone-900 font-extrabold px-4 py-2.5 rounded-xl"
                   >
                     {NEXT_ACTION_LABEL[order.status]}
                   </button>

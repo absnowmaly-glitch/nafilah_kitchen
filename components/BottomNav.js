@@ -38,34 +38,46 @@ export default function BottomNav() {
   }, []);
 
   const items = [
-    { href: '/', label: 'Pesanan', icon: ShoppingCart },
+    { href: '/', label: 'Kasir', icon: ShoppingCart },
     { href: '/antrian', label: 'Antrian', icon: ClipboardList, badge: activeCount },
     { href: '/menu', label: 'Menu', icon: UtensilsCrossed },
     { href: '/laporan', label: 'Laporan', icon: BarChart3 },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-stone-200 bg-white">
-      <div className="max-w-md mx-auto grid grid-cols-4">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white rounded-t-3xl shadow-[0_-6px_20px_rgba(0,0,0,0.08)]">
+      <div className="max-w-md mx-auto grid grid-cols-4 px-2 pt-2.5 pb-3">
         {items.map(({ href, label, icon: Icon, badge }) => {
           const active = pathname === href;
           return (
             <Link
               key={href}
               href={href}
-              className={`flex flex-col items-center justify-center gap-1 py-2.5 ${
-                active ? 'text-primary-600' : 'text-stone-400'
-              }`}
+              className="flex flex-col items-center justify-center gap-1"
             >
               <div className="relative">
-                <Icon size={22} strokeWidth={active ? 2.5 : 2} />
+                <div
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors ${
+                    active ? 'bg-primary-500' : 'bg-transparent'
+                  }`}
+                >
+                  <Icon
+                    size={20}
+                    strokeWidth={active ? 2.5 : 2}
+                    className={active ? 'text-stone-900' : 'text-stone-400'}
+                  />
+                </div>
                 {badge > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-ember-500 text-white text-[10px] leading-none rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 font-mono">
+                  <span className="absolute -top-0.5 -right-0.5 bg-ember-500 text-white text-[10px] leading-none rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 font-mono">
                     {badge}
                   </span>
                 )}
               </div>
-              <span className="text-[11px] font-semibold">{label}</span>
+              <span
+                className={`text-[11px] font-bold ${active ? 'text-stone-900' : 'text-stone-400'}`}
+              >
+                {label}
+              </span>
             </Link>
           );
         })}

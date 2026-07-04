@@ -2,12 +2,11 @@
 
 export const dynamic = 'force-dynamic';
 
-
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { formatRupiah, formatClock } from '@/lib/format';
 import { STATUS } from '@/lib/statusConfig';
-import { Plus, Minus, ShoppingCart, X, Check, Printer } from 'lucide-react';
+import { Plus, Minus, ShoppingBag, X, Check, Printer, Search } from 'lucide-react';
 
 export default function KasirPage() {
   const [menuItems, setMenuItems] = useState([]);
@@ -18,6 +17,7 @@ export default function KasirPage() {
   const [submitting, setSubmitting] = useState(false);
   const [receipt, setReceipt] = useState(null);
   const [activeCategory, setActiveCategory] = useState('Semua');
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     let mounted = true;
@@ -53,10 +53,14 @@ export default function KasirPage() {
   }, [menuItems]);
 
   const visibleItems = useMemo(() => {
+    const q = query.trim().toLowerCase();
     return menuItems.filter(
-      (m) => m.is_available && (activeCategory === 'Semua' || m.category === activeCategory)
+      (m) =>
+        m.is_available &&
+        (activeCategory === 'Semua' || m.category === activeCategory) &&
+        (q === '' || m.name.toLowerCase().includes(q))
     );
-  }, [menuItems, activeCategory]);
+  }, [menuItems, activeCategory, query]);
 
   const cartLines = useMemo(() => {
     return Object.entries(cart)
@@ -131,20 +135,31 @@ export default function KasirPage() {
   }
 
   return (
-    <div className="pb-24">
-      <header className="sticky top-0 z-30 bg-white border-b border-stone-100 px-4 pt-4 pb-3">
-        <h1 className="text-lg font-bold text-stone-800">Pesanan</h1>
-        <p className="text-xs text-stone-400">Pilih menu untuk membuat pesanan baru</p>
+    <div className="pb-8">
+      <header className="px-5 pt-5 pb-3">
+        <h1 className="text-2xl font-extrabold text-stone-900 tracking-tight">Pilih Menu</h1>
+        <p className="text-sm text-stone-400 mt-0.5">Sentuh menu untuk mulai pesanan baru</p>
 
-        <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1">
+        <div className="relative mt-4">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Cari menu..."
+            className="w-full bg-stone-100 rounded-2xl pl-11 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+          />
+        </div>
+
+        <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-1">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+              className={`whitespace-nowrap px-4 py-2 rounded-2xl text-sm font-bold transition-colors ${
                 activeCategory === cat
-                  ? 'bg-primary-500 border-primary-500 text-white'
-                  : 'bg-white border-stone-200 text-stone-500'
+                  ? 'bg-primary-500 text-stone-900 shadow-sm'
+                  : 'bg-white border border-stone-200 text-stone-500'
               }`}
             >
               {cat}
@@ -153,49 +168,56 @@ export default function KasirPage() {
         </div>
       </header>
 
-      <main className="px-4 pt-3 grid grid-cols-2 gap-3">
+      <main className="px-5 pt-2 grid grid-cols-2 gap-3">
         {loading && (
           <p className="col-span-2 text-center text-stone-400 text-sm py-10">Memuat menu...</p>
         )}
         {!loading && visibleItems.length === 0 && (
           <p className="col-span-2 text-center text-stone-400 text-sm py-10">
-            Belum ada menu tersedia. Tambahkan lewat tab Menu.
+            Menu tidak ditemukan.
           </p>
         )}
         {visibleItems.map((item) => {
           const qty = cart[item.id] || 0;
           return (
-            <div key={item.id} className="border border-stone-200 rounded-2xl p-3 flex flex-col">
-              <p className="font-semibold text-sm text-stone-800 leading-snug">{item.name}</p>
-              <p className="text-xs text-stone-400 mb-3">{item.category}</p>
+            <div
+              key={item.id}
+              className="bg-white rounded-3xl p-3.5 flex flex-col shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50"
+            >
+              <span className="inline-block self-start text-[10px] font-bold uppercase tracking-wide text-primary-700 bg-primary-50 rounded-full px-2 py-0.5 mb-2">
+                {item.category}
+              </span>
+              <p className="font-bold text-sm text-stone-900 leading-snug mb-3">{item.name}</p>
               <div className="mt-auto flex items-center justify-between">
-                <span className="text-sm font-bold text-primary-600 font-mono">
+                <span className="text-sm font-extrabold text-stone-900 font-mono">
                   {formatRupiah(item.price)}
                 </span>
                 {qty === 0 ? (
                   <button
                     onClick={() => addToCart(item.id)}
-                    className="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center active:scale-95"
+                    className="w-9 h-9 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center active:scale-95 shadow-sm"
                     aria-label={`Tambah ${item.name}`}
                   >
-                    <Plus size={16} />
+                    <Plus size={18} strokeWidth={2.5} />
                   </button>
                 ) : (
-                  <div className="flex items-center gap-2 bg-primary-50 rounded-full px-1">
+                  <div className="flex items-center gap-1.5 bg-stone-900 rounded-full pl-1 pr-1 py-1">
                     <button
                       onClick={() => decFromCart(item.id)}
-                      className="w-7 h-7 rounded-full bg-white text-primary-600 flex items-center justify-center shadow-sm"
+                      className="w-7 h-7 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center"
                       aria-label={`Kurangi ${item.name}`}
                     >
-                      <Minus size={14} />
+                      <Minus size={14} strokeWidth={2.5} />
                     </button>
-                    <span className="text-sm font-semibold w-4 text-center font-mono">{qty}</span>
+                    <span className="text-sm font-bold w-4 text-center font-mono text-white">
+                      {qty}
+                    </span>
                     <button
                       onClick={() => addToCart(item.id)}
-                      className="w-7 h-7 rounded-full bg-primary-500 text-white flex items-center justify-center"
+                      className="w-7 h-7 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center"
                       aria-label={`Tambah ${item.name}`}
                     >
-                      <Plus size={14} />
+                      <Plus size={14} strokeWidth={2.5} />
                     </button>
                   </div>
                 )}
@@ -208,49 +230,57 @@ export default function KasirPage() {
       {cartCount > 0 && !cartOpen && (
         <button
           onClick={() => setCartOpen(true)}
-          className="fixed bottom-20 left-4 right-4 max-w-md mx-auto bg-primary-500 text-white rounded-2xl py-3.5 px-5 flex items-center justify-between shadow-ticket z-40"
+          className="fixed bottom-24 left-5 right-5 max-w-md mx-auto bg-stone-900 text-white rounded-full py-4 px-5 flex items-center justify-between shadow-ticket z-40"
         >
-          <span className="flex items-center gap-2 text-sm font-semibold">
-            <ShoppingCart size={18} />
+          <span className="flex items-center gap-2.5 text-sm font-bold">
+            <span className="w-7 h-7 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center">
+              <ShoppingBag size={14} strokeWidth={2.5} />
+            </span>
             {cartCount} item
           </span>
-          <span className="font-bold font-mono">{formatRupiah(cartTotal)}</span>
+          <span className="font-extrabold font-mono text-primary-400">
+            {formatRupiah(cartTotal)}
+          </span>
         </button>
       )}
 
       {cartOpen && (
         <div className="fixed inset-0 z-50 flex items-end">
           <div className="absolute inset-0 bg-black/40" onClick={() => setCartOpen(false)} />
-          <div className="relative w-full max-w-md mx-auto bg-white rounded-t-3xl p-5 max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold text-stone-800">Pesanan</h2>
-              <button onClick={() => setCartOpen(false)} aria-label="Tutup">
-                <X size={20} className="text-stone-400" />
+          <div className="relative w-full max-w-md mx-auto bg-white rounded-t-[32px] p-6 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-extrabold text-xl text-stone-900">Pesanan Anda</h2>
+              <button
+                onClick={() => setCartOpen(false)}
+                aria-label="Tutup"
+                className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center"
+              >
+                <X size={18} className="text-stone-500" />
               </button>
             </div>
 
-            <div className="space-y-3 mb-4">
+            <div className="space-y-4 mb-5">
               {cartLines.map((l) => (
                 <div key={l.id} className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-stone-700">{l.name}</p>
+                    <p className="text-sm font-bold text-stone-800">{l.name}</p>
                     <p className="text-xs text-stone-400 font-mono">
                       {formatRupiah(l.price)} x {l.qty}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 bg-stone-900 rounded-full pl-1 pr-1 py-1">
                     <button
                       onClick={() => decFromCart(l.id)}
-                      className="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center"
+                      className="w-7 h-7 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center"
                     >
-                      <Minus size={14} />
+                      <Minus size={14} strokeWidth={2.5} />
                     </button>
-                    <span className="text-sm w-4 text-center font-mono">{l.qty}</span>
+                    <span className="text-sm w-4 text-center font-mono text-white">{l.qty}</span>
                     <button
                       onClick={() => addToCart(l.id)}
-                      className="w-7 h-7 rounded-full bg-stone-100 flex items-center justify-center"
+                      className="w-7 h-7 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center"
                     >
-                      <Plus size={14} />
+                      <Plus size={14} strokeWidth={2.5} />
                     </button>
                   </div>
                 </div>
@@ -262,12 +292,12 @@ export default function KasirPage() {
               placeholder="Nama pelanggan (opsional)"
               value={customerName}
               onChange={(e) => setCustomerName(e.target.value)}
-              className="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm mb-4 focus:outline-none focus:border-primary-400"
+              className="w-full bg-stone-100 rounded-2xl px-4 py-3 text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-primary-400"
             />
 
-            <div className="flex items-center justify-between mb-4 text-sm">
-              <span className="text-stone-500">Total</span>
-              <span className="font-bold text-lg text-stone-800 font-mono">
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-stone-500 text-sm font-semibold">Total</span>
+              <span className="font-extrabold text-2xl text-stone-900 font-mono">
                 {formatRupiah(cartTotal)}
               </span>
             </div>
@@ -275,7 +305,7 @@ export default function KasirPage() {
             <button
               onClick={submitOrder}
               disabled={submitting}
-              className="w-full bg-primary-500 text-white rounded-xl py-3.5 font-semibold disabled:opacity-60"
+              className="w-full bg-primary-500 text-stone-900 rounded-2xl py-4 font-extrabold text-sm disabled:opacity-60"
             >
               {submitting ? 'Menyimpan...' : 'Buat Pesanan & Cetak Nota'}
             </button>
@@ -286,7 +316,7 @@ export default function KasirPage() {
       {receipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50" />
-          <div className="relative w-full max-w-sm bg-white rounded-2xl rounded-b-none p-5 receipt-tear">
+          <div className="relative w-full max-w-sm bg-white rounded-3xl rounded-b-none p-6 receipt-tear">
             <div id="print-area" className="hidden print:block">
               <div className="text-center mb-2">
                 <img src="/logo-black.png" alt="Nafilah" className="h-12 w-auto mx-auto mb-1" />
@@ -320,13 +350,15 @@ export default function KasirPage() {
               </p>
             </div>
 
-            <div className="text-center mb-4">
-              <p className="text-xs text-stone-400 tracking-widest uppercase">Nota Pembayaran</p>
-              <p className="text-3xl font-bold text-primary-600 font-mono mt-1">
+            <div className="text-center mb-5">
+              <p className="text-xs text-stone-400 font-bold tracking-widest uppercase">
+                Nota Pembayaran
+              </p>
+              <p className="text-4xl font-extrabold text-stone-900 font-mono mt-1">
                 #{receipt.order_number}
               </p>
               {receipt.customer_name && (
-                <p className="text-sm text-stone-600 mt-1">{receipt.customer_name}</p>
+                <p className="text-sm text-stone-600 mt-1 font-medium">{receipt.customer_name}</p>
               )}
             </div>
 
@@ -341,29 +373,32 @@ export default function KasirPage() {
               ))}
             </div>
 
-            <div className="border-t border-dashed border-stone-300 pt-3 flex justify-between font-bold text-stone-800 mb-6">
+            <div className="border-t border-dashed border-stone-300 pt-3 flex justify-between font-extrabold text-stone-900 mb-6">
               <span>Total</span>
               <span className="font-mono">{formatRupiah(receipt.total)}</span>
             </div>
 
-            <p className="text-xs text-center text-stone-400 mb-4">
+            <p className="text-xs text-center text-stone-400 mb-5">
               Silakan bayar &amp; tunjukkan nota ini ke Kasir Utama
             </p>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2.5">
               <button
                 onClick={() => window.print()}
-                className="w-full bg-stone-800 text-white rounded-xl py-3 font-semibold flex items-center justify-center gap-2"
+                className="w-full bg-stone-900 text-white rounded-2xl py-3.5 font-extrabold text-sm flex items-center justify-center gap-2"
               >
                 <Printer size={16} /> Cetak Nota
               </button>
               <button
                 onClick={markPaidNow}
-                className="w-full bg-primary-500 text-white rounded-xl py-3 font-semibold flex items-center justify-center gap-2"
+                className="w-full bg-primary-500 text-stone-900 rounded-2xl py-3.5 font-extrabold text-sm flex items-center justify-center gap-2"
               >
-                <Check size={16} /> Sudah Dibayar, Proses Pesanan
+                <Check size={16} strokeWidth={2.5} /> Sudah Dibayar, Proses Pesanan
               </button>
-              <button onClick={() => setReceipt(null)} className="w-full text-stone-400 text-sm py-2">
+              <button
+                onClick={() => setReceipt(null)}
+                className="w-full text-stone-400 text-sm font-semibold py-2"
+              >
                 Tutup (proses pembayaran nanti di Antrian)
               </button>
             </div>
