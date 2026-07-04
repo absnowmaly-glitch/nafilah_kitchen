@@ -125,10 +125,11 @@ export default function AntrianPage() {
         {!loading && filtered.length === 0 && (
           <p className="text-center text-stone-400 text-sm py-10">Tidak ada pesanan di status ini</p>
         )}
-        {filtered.map((order) => (
+        {filtered.map((order, idx) => (
           <div
             key={order.id}
-            className={`bg-white rounded-3xl p-4 shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50 border-l-4 ${BORDER_COLOR[order.status]}`}
+            style={{ animationDelay: `${Math.min(idx * 30, 300)}ms` }}
+            className={`bg-white rounded-3xl p-4 shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50 border-l-4 animate-fade-in-up ${BORDER_COLOR[order.status]}`}
           >
             <div className="flex items-start justify-between mb-2">
               <div>
@@ -169,7 +170,7 @@ export default function AntrianPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setPrintOrder(order)}
-                  className="w-9 h-9 flex items-center justify-center text-stone-400 bg-stone-100 rounded-xl"
+                  className="w-9 h-9 flex items-center justify-center text-stone-400 bg-stone-100 rounded-xl active:scale-90 transition-transform"
                   aria-label={`Cetak nota #${order.order_number}`}
                 >
                   <Printer size={15} />
@@ -185,7 +186,7 @@ export default function AntrianPage() {
                 {NEXT_STATUS[order.status] && (
                   <button
                     onClick={() => advance(order)}
-                    className="text-xs bg-primary-500 text-stone-900 font-extrabold px-4 py-2.5 rounded-xl"
+                    className="text-xs bg-primary-500 text-stone-900 font-extrabold px-4 py-2.5 rounded-xl active:scale-95 transition-transform"
                   >
                     {NEXT_ACTION_LABEL[order.status]}
                   </button>

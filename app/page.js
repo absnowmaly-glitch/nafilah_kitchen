@@ -177,12 +177,13 @@ export default function KasirPage() {
             Menu tidak ditemukan.
           </p>
         )}
-        {visibleItems.map((item) => {
+        {visibleItems.map((item, idx) => {
           const qty = cart[item.id] || 0;
           return (
             <div
               key={item.id}
-              className="bg-white rounded-3xl p-3.5 flex flex-col shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50"
+              style={{ animationDelay: `${Math.min(idx * 30, 300)}ms` }}
+              className="bg-white rounded-3xl p-3.5 flex flex-col shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50 animate-fade-in-up"
             >
               <span className="inline-block self-start text-[10px] font-bold uppercase tracking-wide text-primary-700 bg-primary-50 rounded-full px-2 py-0.5 mb-2">
                 {item.category}
@@ -195,7 +196,7 @@ export default function KasirPage() {
                 {qty === 0 ? (
                   <button
                     onClick={() => addToCart(item.id)}
-                    className="w-9 h-9 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center active:scale-95 shadow-sm"
+                    className="w-9 h-9 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center active:scale-90 transition-transform shadow-sm"
                     aria-label={`Tambah ${item.name}`}
                   >
                     <Plus size={18} strokeWidth={2.5} />
@@ -230,7 +231,7 @@ export default function KasirPage() {
       {cartCount > 0 && !cartOpen && (
         <button
           onClick={() => setCartOpen(true)}
-          className="fixed bottom-24 left-5 right-5 max-w-md mx-auto bg-stone-900 text-white rounded-full py-4 px-5 flex items-center justify-between shadow-ticket z-40"
+          className="fixed bottom-24 left-5 right-5 max-w-md mx-auto bg-stone-900 text-white rounded-full py-4 px-5 flex items-center justify-between shadow-ticket z-40 animate-slide-up active:scale-[0.98] transition-transform"
         >
           <span className="flex items-center gap-2.5 text-sm font-bold">
             <span className="w-7 h-7 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center">
@@ -246,8 +247,8 @@ export default function KasirPage() {
 
       {cartOpen && (
         <div className="fixed inset-0 z-50 flex items-end">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setCartOpen(false)} />
-          <div className="relative w-full max-w-md mx-auto bg-white rounded-t-[32px] p-6 max-h-[80vh] overflow-y-auto">
+          <div className="absolute inset-0 bg-black/40 animate-fade-in" onClick={() => setCartOpen(false)} />
+          <div className="relative w-full max-w-md mx-auto bg-white rounded-t-[32px] p-6 max-h-[80vh] overflow-y-auto animate-slide-up">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-extrabold text-xl text-stone-900">Pesanan Anda</h2>
               <button
@@ -315,8 +316,8 @@ export default function KasirPage() {
 
       {receipt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50" />
-          <div className="relative w-full max-w-sm bg-white rounded-3xl rounded-b-none p-6 receipt-tear">
+          <div className="absolute inset-0 bg-black/50 animate-fade-in" />
+          <div className="relative w-full max-w-sm bg-white rounded-3xl rounded-b-none p-6 receipt-tear animate-scale-in">
             <div id="print-area" className="hidden print:block">
               <div className="text-center mb-2">
                 <img src="/logo-black.png" alt="Nafilah" className="h-12 w-auto mx-auto mb-1" />

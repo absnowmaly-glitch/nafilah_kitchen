@@ -147,7 +147,7 @@ export default function LaporanPage() {
           <p className="text-center text-stone-400 text-sm py-10">Memuat laporan...</p>
         ) : (
           <>
-            <div className="bg-stone-900 rounded-[28px] p-6 text-white relative overflow-hidden">
+            <div className="bg-stone-900 rounded-[28px] p-6 text-white relative overflow-hidden animate-fade-in-up">
               <div className="w-11 h-11 rounded-2xl bg-primary-500 flex items-center justify-center mb-3">
                 <TrendingUp size={20} className="text-stone-900" strokeWidth={2.5} />
               </div>
@@ -191,7 +191,8 @@ export default function LaporanPage() {
                   {topItems.map((it, idx) => (
                     <div
                       key={it.name}
-                      className="bg-white rounded-3xl p-3.5 flex items-center gap-3 shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50"
+                      style={{ animationDelay: `${Math.min(idx * 30, 300)}ms` }}
+                      className="bg-white rounded-3xl p-3.5 flex items-center gap-3 shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50 animate-fade-in-up"
                     >
                       <span className="w-8 h-8 rounded-xl bg-primary-50 flex items-center justify-center text-xs font-extrabold text-primary-700 font-mono">
                         {idx + 1}

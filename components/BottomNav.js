@@ -57,8 +57,8 @@ export default function BottomNav() {
             >
               <div className="relative">
                 <div
-                  className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors ${
-                    active ? 'bg-primary-500' : 'bg-transparent'
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 ${
+                    active ? 'bg-primary-500 scale-105' : 'bg-transparent scale-100'
                   }`}
                 >
                   <Icon

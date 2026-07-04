@@ -132,10 +132,11 @@ export default function MenuPage() {
               {cat}
             </h2>
             <div className="space-y-2.5">
-              {list.map((item) => (
+              {list.map((item, idx) => (
                 <div
                   key={item.id}
-                  className="bg-white rounded-3xl p-3.5 flex items-center gap-3 shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50"
+                  style={{ animationDelay: `${Math.min(idx * 30, 300)}ms` }}
+                  className="bg-white rounded-3xl p-3.5 flex items-center gap-3 shadow-[0_2px_14px_rgba(28,25,23,0.06)] border border-stone-50 animate-fade-in-up"
                 >
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-sm text-stone-900 truncate">{item.name}</p>
@@ -176,7 +177,7 @@ export default function MenuPage() {
 
       <button
         onClick={openNew}
-        className="fixed bottom-24 right-5 w-14 h-14 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center shadow-ticket z-40"
+        className="fixed bottom-24 right-5 w-14 h-14 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center shadow-ticket z-40 active:scale-90 transition-transform"
         aria-label="Tambah menu"
       >
         <Plus size={26} strokeWidth={2.5} />
@@ -184,8 +185,8 @@ export default function MenuPage() {
 
       {form && (
         <div className="fixed inset-0 z-50 flex items-end">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setForm(null)} />
-          <div className="relative w-full max-w-md mx-auto bg-white rounded-t-[32px] p-6">
+          <div className="absolute inset-0 bg-black/40 animate-fade-in" onClick={() => setForm(null)} />
+          <div className="relative w-full max-w-md mx-auto bg-white rounded-t-[32px] p-6 animate-slide-up">
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-extrabold text-xl text-stone-900">
                 {form.id ? 'Edit Menu' : 'Tambah Menu'}
