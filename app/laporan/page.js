@@ -8,6 +8,7 @@ import { formatRupiah } from '@/lib/format';
 import { startOfDay, startOfWeek, startOfMonth, endOfDay } from '@/lib/dateRange';
 import { STATUS } from '@/lib/statusConfig';
 import { TrendingUp, ShoppingBag, Clock3, Ban } from 'lucide-react';
+import Spinner from '@/components/Spinner';
 
 // Omset dihitung dari pesanan yang statusnya sudah lewat "menunggu bayar"
 // (artinya sudah dikonfirmasi dibayar), dan bukan yang dibatalkan.
@@ -144,7 +145,7 @@ export default function LaporanPage() {
 
       <main className="px-5 pt-2 space-y-5">
         {loading ? (
-          <p className="text-center text-stone-400 text-sm py-10">Memuat laporan...</p>
+          <Spinner label="Memuat laporan..." />
         ) : (
           <>
             <div className="bg-stone-900 rounded-[28px] p-6 text-white relative overflow-hidden animate-fade-in-up">

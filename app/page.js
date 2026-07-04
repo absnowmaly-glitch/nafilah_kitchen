@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { formatRupiah, formatClock } from '@/lib/format';
 import { STATUS } from '@/lib/statusConfig';
 import { Plus, Minus, ShoppingBag, X, Check, Printer, Search } from 'lucide-react';
+import Spinner from '@/components/Spinner';
 
 export default function KasirPage() {
   const [menuItems, setMenuItems] = useState([]);
@@ -170,7 +171,9 @@ export default function KasirPage() {
 
       <main className="px-5 pt-2 grid grid-cols-2 gap-3">
         {loading && (
-          <p className="col-span-2 text-center text-stone-400 text-sm py-10">Memuat menu...</p>
+          <div className="col-span-2">
+            <Spinner label="Memuat menu..." />
+          </div>
         )}
         {!loading && visibleItems.length === 0 && (
           <p className="col-span-2 text-center text-stone-400 text-sm py-10">
@@ -306,7 +309,7 @@ export default function KasirPage() {
             <button
               onClick={submitOrder}
               disabled={submitting}
-              className="w-full bg-primary-500 text-stone-900 rounded-2xl py-4 font-extrabold text-sm disabled:opacity-60"
+              className="w-full bg-primary-500 text-stone-900 rounded-2xl py-4 font-extrabold text-sm disabled:opacity-60 btn-shine"
             >
               {submitting ? 'Menyimpan...' : 'Buat Pesanan & Cetak Nota'}
             </button>
@@ -392,7 +395,7 @@ export default function KasirPage() {
               </button>
               <button
                 onClick={markPaidNow}
-                className="w-full bg-primary-500 text-stone-900 rounded-2xl py-3.5 font-extrabold text-sm flex items-center justify-center gap-2"
+                className="w-full bg-primary-500 text-stone-900 rounded-2xl py-3.5 font-extrabold text-sm flex items-center justify-center gap-2 btn-shine"
               >
                 <Check size={16} strokeWidth={2.5} /> Sudah Dibayar, Proses Pesanan
               </button>

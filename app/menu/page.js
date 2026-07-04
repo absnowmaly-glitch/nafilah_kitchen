@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { formatRupiah } from '@/lib/format';
 import { Plus, Pencil, Trash2, X } from 'lucide-react';
+import Spinner from '@/components/Spinner';
 
 const EMPTY_FORM = { id: null, name: '', price: '', category: '', is_available: true };
 
@@ -120,7 +121,7 @@ export default function MenuPage() {
       </header>
 
       <main className="px-5 pt-2 space-y-6">
-        {loading && <p className="text-center text-stone-400 text-sm py-10">Memuat menu...</p>}
+        {loading && <Spinner label="Memuat menu..." />}
         {!loading && items.length === 0 && (
           <p className="text-center text-stone-400 text-sm py-10">
             Belum ada menu. Tambahkan menu pertama Anda lewat tombol + di kanan bawah.
@@ -144,16 +145,19 @@ export default function MenuPage() {
                       {formatRupiah(item.price)}
                     </p>
                   </div>
-                  <button
-                    onClick={() => toggleAvailable(item)}
-                    className={`text-[11px] px-2.5 py-1.5 rounded-full font-bold whitespace-nowrap ${
-                      item.is_available
-                        ? 'bg-emerald-50 text-emerald-700'
-                        : 'bg-stone-100 text-stone-400'
-                    }`}
+                  <label
+                    className="relative inline-flex items-center cursor-pointer shrink-0"
+                    title={item.is_available ? 'Tersedia' : 'Habis'}
                   >
-                    {item.is_available ? 'Tersedia' : 'Habis'}
-                  </button>
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={item.is_available}
+                      onChange={() => toggleAvailable(item)}
+                    />
+                    <span className="w-11 h-6 bg-stone-200 rounded-full peer-checked:bg-emerald-400 transition-colors duration-300 block" />
+                    <span className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-5" />
+                  </label>
                   <button
                     onClick={() => openEdit(item)}
                     className="w-9 h-9 flex items-center justify-center text-stone-500 bg-stone-100 rounded-xl"
@@ -177,7 +181,7 @@ export default function MenuPage() {
 
       <button
         onClick={openNew}
-        className="fixed bottom-24 right-5 w-14 h-14 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center shadow-ticket z-40 active:scale-90 transition-transform"
+        className="fixed bottom-24 right-5 w-14 h-14 rounded-full bg-primary-500 text-stone-900 flex items-center justify-center shadow-ticket z-40 active:scale-90 transition-transform btn-shine"
         aria-label="Tambah menu"
       >
         <Plus size={26} strokeWidth={2.5} />
@@ -238,21 +242,25 @@ export default function MenuPage() {
                   ))}
                 </datalist>
               </div>
-              <label className="flex items-center gap-2 text-sm font-semibold text-stone-600">
-                <input
-                  type="checkbox"
-                  checked={form.is_available}
-                  onChange={(e) => setForm({ ...form, is_available: e.target.checked })}
-                  className="w-4 h-4"
-                />
-                Tersedia dijual
+              <label className="flex items-center justify-between text-sm font-semibold text-stone-600 pt-1">
+                <span>Tersedia dijual</span>
+                <span className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={form.is_available}
+                    onChange={(e) => setForm({ ...form, is_available: e.target.checked })}
+                  />
+                  <span className="w-12 h-7 bg-stone-200 rounded-full peer-checked:bg-emerald-400 transition-colors duration-300 block" />
+                  <span className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-5" />
+                </span>
               </label>
             </div>
 
             <button
               onClick={save}
               disabled={saving}
-              className="w-full bg-primary-500 text-stone-900 rounded-2xl py-4 font-extrabold text-sm mt-6 disabled:opacity-60"
+              className="w-full bg-primary-500 text-stone-900 rounded-2xl py-4 font-extrabold text-sm mt-6 disabled:opacity-60 btn-shine"
             >
               {saving ? 'Menyimpan...' : 'Simpan'}
             </button>

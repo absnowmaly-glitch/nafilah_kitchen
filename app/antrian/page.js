@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { formatRupiah, timeAgo, formatClock } from '@/lib/format';
 import { STATUS, STATUS_CONFIG, NEXT_STATUS, NEXT_ACTION_LABEL } from '@/lib/statusConfig';
 import { Clock, Printer } from 'lucide-react';
+import Spinner from '@/components/Spinner';
 
 const TABS = [STATUS.MENUNGGU, STATUS.DIPROSES, STATUS.SIAP, STATUS.SELESAI];
 
@@ -121,7 +122,7 @@ export default function AntrianPage() {
       </header>
 
       <main className="px-5 pt-2 space-y-3">
-        {loading && <p className="text-center text-stone-400 text-sm py-10">Memuat...</p>}
+        {loading && <Spinner label="Memuat..." />}
         {!loading && filtered.length === 0 && (
           <p className="text-center text-stone-400 text-sm py-10">Tidak ada pesanan di status ini</p>
         )}
